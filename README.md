@@ -140,27 +140,7 @@ void loop() {
   }
 }
 ```
-## Using Serial Monitor with TinyUSB
 
-TinyUSB creates a USB CDC serial port called `SerialTinyUSB`. To use the Arduino Serial Monitor:
-
-**Option 1: Use SerialTinyUSB directly**
-```cpp
-SerialTinyUSB.begin(115200);
-SerialTinyUSB.println("Hello!");
-```
-
-**Option 2: Alias Serial (recommended for code portability)**
-```cpp
-#define Serial SerialTinyUSB
-
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Hello!");
-}
-```
-
-Add the `#define` at the top of your sketch before any other includes.
 ## Technical Details
 
 ### Key Implementation Notes
