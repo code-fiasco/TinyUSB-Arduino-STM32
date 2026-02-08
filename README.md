@@ -1,4 +1,5 @@
 # TinyUSB for STM32 (Arduino)
+(Note: this has not been integrated into the Adagruit TinyUSB here and exists here as a reference for further development)
 
 This port adds STM32F4 support to the [Adafruit TinyUSB Arduino Library](https://github.com/adafruit/Adafruit_TinyUSB_Arduino), enabling advanced USB device functionality (MIDI, HID, MSC, etc.) on STM32 microcontrollers.
 
