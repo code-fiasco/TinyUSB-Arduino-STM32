@@ -1,4 +1,5 @@
 # TinyUSB for STM32 (Arduino)
+(Note: this has not been integrated into the Adagruit TinyUSB here and exists here as a reference for further development)
 
 > **Note:** An earlier version of this port is integrated into the official Adafruit TinyUSB library. I will submit the updated version once it is ready and hopefully get the changes made in the stm32 core files so that manual editing of boards.txt is not required.
 
