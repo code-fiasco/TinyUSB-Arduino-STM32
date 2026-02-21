@@ -1,13 +1,12 @@
 # TinyUSB for STM32 (Arduino)
-(Note: this has not been integrated into the Adagruit TinyUSB here and exists here as a reference for further development)
 
-> **Note:** An earlier version of this port is integrated into the official Adafruit TinyUSB library. I will submit the updated version once it is ready and hopefully get the changes made in the stm32 core files so that manual editing of boards.txt is not required.
+> **Note:** An earlier version of this port with partial support for the F4 family is integrated into the official Adafruit TinyUSB library. I will submit the updated version once it is ready and hopefully get the changes made in the stm32 core files so that manual editing of boards.txt is not required.
 
 This port adds STM32F1, STM32F4, and STM32G4 support to the [Adafruit TinyUSB Arduino Library](https://github.com/adafruit/Adafruit_TinyUSB_Arduino), enabling advanced USB device functionality (MIDI, HID, MSC, CDC, etc.) on STM32 microcontrollers.
 
 ## What's New
 
-Whilst this port should still be considered experimental, it is now a lot more fleshed out than previous versions:
+Whilst this port should still be considered experimental, it is now a lot more fleshed out than previous versions. Previously manual initialization and polling calls had to be made from within the sketch:
 
 ```cpp
 // Previously required in setup():
@@ -38,7 +37,7 @@ Support has been added and tested for three STM32 families: **F1**, **F4**, and 
 - **STM32F1 series:** Other F103 variants — same USB peripheral
 - **STM32G4 series:** G474, G491, G4A1 — same USB peripheral
 
-### Not Supported (yet)
+### Not Supported (...yet!)
 - STM32F0, F2, F3 — different USB peripheral architecture
 - STM32L, STM32H7 — would need clock configuration changes
 
@@ -74,33 +73,7 @@ Place the `stm32` folder into:
 libraries/Adafruit_TinyUSB_Library/src/arduino/ports/
 ```
 
-### Step 3: Edit tusb_config.h
-Open `Arduino/libraries/Adafruit_TinyUSB_Library/src/tusb_config.h` and find the platform detection block (around line 30–40):
-
-```cpp
-#if defined(ARDUINO_ARCH_SAMD)
-  #include "arduino/ports/samd/tusb_config_samd.h"
-#elif defined(ARDUINO_NRF52_ADAFRUIT)
-  #include "arduino/ports/nrf/tusb_config_nrf.h"
-#elif defined(ARDUINO_ARCH_RP2040)
-  #include "arduino/ports/rp2040/tusb_config_rp2040.h"
-#elif defined(ARDUINO_ARCH_ESP32)
-  // do nothing since we force include "arduino/ports/esp32/tusb_config_esp32.h" in tusb_option.h
-#elif defined(ARDUINO_ARCH_CH32) || defined(CH32V20x) || defined(CH32V30x)
-  #include "arduino/ports/ch32/tusb_config_ch32.h"
-#else
-  #error TinyUSB Arduino Library does not support your core yet
-#endif
-```
-
-Add the following lines **before** the `#else`:
-
-```cpp
-#elif defined(ARDUINO_ARCH_STM32) || defined(ARDUINO_ARCH_ARDUINO_CORE_STM32)
-  #include "arduino/ports/stm32/tusb_config_stm32.h"
-```
-
-### Step 4: Edit boards.txt
+### Step 3: Edit boards.txt
 Open your STM32 core's `boards.txt`, typically at:
 ```
 Arduino15/packages/STMicroelectronics/hardware/stm32/[version]/boards.txt
@@ -126,10 +99,10 @@ GenG4.menu.usb.TinyUSB=Adafruit TinyUSB
 GenG4.menu.usb.TinyUSB.build.usb_flags={build.extra_flags} -DARDUINO_ARCH_TINYUSB
 ```
 
-### Step 5: Restart Arduino IDE
+### Step 4: Restart Arduino IDE
 Close and reopen Arduino IDE for changes to take effect.
 
-### Step 6: Select TinyUSB
+### Step 5: Select TinyUSB
 In Arduino IDE, go to **Tools > USB** and select **"Adafruit TinyUSB"**.
 
 ## Usage
@@ -141,8 +114,10 @@ Sketches require no USB initialisation boilerplate. `Serial` works normally. Her
 
 void setup() {
   Serial.begin(115200);
+
   // optional delay
   while (!TinyUSBDevice.mounted()) delay(1);
+
   Serial.println("Hello from STM32!");
 }
 
@@ -159,6 +134,7 @@ void loop() {
 
 - **`Adafruit_TinyUSB_stm32.cpp`** — Hardware initialisation, IRQ handlers, automatic task polling, and DFU bootloader entry for F1, F4, and G4 families
 - **`tusb_config_stm32.h`** — TinyUSB configuration and class enable flags for STM32
+- **`boards_txt_additions.txt`** — entries to be pasted into the STM32duino core `boards.txt` file
 
 ## Known Limitations
 - Only the F1, F4, and G4 families are currently supported — see compatibility table above
@@ -174,7 +150,7 @@ void loop() {
 - On G4 boards, ensure no other USB stack (e.g. the STM32duino built-in CDC) is also enabled
 
 **Compilation errors:**
-- Confirm the Adafruit TinyUSB library is installed via Library Manager
+- Confirm the latest version of Adafruit TinyUSB library is installed via Library Manager
 - Make sure USB support in board setting is set to `Adafruit TinyUSB`
 - Restart Arduino IDE after making changes to `tusb_config.h` or `boards.txt`
 - Verify the `stm32` folder is in the correct location under `ports/`
